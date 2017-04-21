@@ -42,7 +42,7 @@ func TestCanRouteTo_MissingRoute(t *testing.T) {
 	// (1)	Test CanRouteTo
 	//			Expected: false
 
-	ip := net.ParseIP("127.100.5.5")
+	ip := net.ParseIP("100.100.5.5")
 	if retval := splice.CanRouteTo(ip); retval != false {
 		t.Error("CanRouteTo Returned 'true' for a Non-Existing Route")
 	}
@@ -85,6 +85,18 @@ func TestHasRoute_MissingRoute(t *testing.T) {
 	_, destination, _ := net.ParseCIDR("127.100.0.0/16")
 	if retval := splice.HasRoute(destination); retval != false {
 		t.Error("HasRoute Returned 'true' for a Non-Existing Route")
+	}
+}
+
+func TestHasRoute_InvalidDestinationValue(t *testing.T) {
+
+	teardown := setupNamespaceTest(t)
+	defer teardown()
+
+	// (1)	Test HasRoute
+	//			Expected: false
+	if retval := splice.HasRoute(&net.IPNet{}); retval != false {
+		t.Error("HasRoute Returned 'true' for an Invalid Destination Value")
 	}
 }
 

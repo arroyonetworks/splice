@@ -12,16 +12,10 @@ import (
 // gateway can actually reach the destination.
 func CanRouteTo(destination net.IP) bool {
 
-	routes, err := netlink.RouteGet(destination)
-	if err != nil {
+	if _, err := netlink.RouteGet(destination); err != nil {
 		return false
 	}
-
-	if len(routes) > 0 {
-		return true
-	}
-
-	return false
+	return true
 }
 
 // Determines if the routing table has a specific entry for the given
@@ -31,19 +25,13 @@ func HasRoute(destination *net.IPNet) bool {
 	filter := &netlink.Route{
 		Dst: destination,
 	}
-	routes, err := netlink.RouteListFiltered(netlink.FAMILY_ALL, filter, 0)
-	if err != nil {
-		return false
-	}
-
-	for _, route := range routes {
-
-		if route.Dst == nil {
-			continue
-		}
-
-		if route.Dst.String() == destination.String() {
-			return true
+	if routes, err := netlink.RouteListFiltered(netlink.FAMILY_ALL, filter, 0); err == nil {
+		for _, route := range routes {
+			if route.Dst != nil {
+				if route.Dst.String() == destination.String() {
+					return true
+				}
+			}
 		}
 	}
 
