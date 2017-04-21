@@ -3,39 +3,34 @@ package splice_test
 import (
 	"github.com/vishvananda/netlink"
 	"github.com/vishvananda/netns"
-	"log"
 	"net"
 	"os"
 	"testing"
 )
 
-var v4LoopbackAddr = &net.IPNet{
-	IP:   net.ParseIP("127.0.0.1"),
-	Mask: net.IPv4Mask(255, 0, 0, 0),
-}
-
 // ============================================================================
-//	Test Setup and Teardown Helpers
+//	Test Scaffolding for Linux
 // ============================================================================
 
-type namespaceTestTeardown func()
-
-func skipUnlessRoot(t *testing.T) {
-
-	if os.Getuid() != 0 {
-		msg := "Skipped test: root privileges are required."
-		log.Printf(msg)
-		t.Skip(msg)
+func init() {
+	IPv4LoopbackAddr = &net.IPNet{
+		IP:   net.ParseIP("127.0.0.1"),
+		Mask: net.IPv4Mask(255, 0, 0, 0),
 	}
 }
 
-func setupNamespaceTest(t *testing.T) namespaceTestTeardown {
+// Sets up a new Linux Test.
+// In Linux, we are able to create a new Network Namespace to run tests
+// in a fresh network stack, and prevent any interruptions to the host.
+func _platformSetup(t *testing.T) func() {
 
-	skipUnlessRoot(t)
+	if os.Getuid() != 0 {
+		SkipWithReason(t, "Test Setup Failed: Root Privileges are Required")
+	}
 
 	ns, err := netns.New()
 	if err != nil {
-		t.Fatal("Failed to Create Network Namespace", ns)
+		SkipWithReason(t, "Test Setup Failed: Failed to Created Network Namespace: "+err.Error())
 	}
 
 	return func() {
@@ -43,65 +38,78 @@ func setupNamespaceTest(t *testing.T) namespaceTestTeardown {
 	}
 }
 
-// ============================================================================
-//	Test Utility Functions
-// ============================================================================
+// Sets up the Linux Loopback Adapter.
+func _platformSetupLoopback(t *testing.T) *net.Interface {
 
-func setLoopbackUp() error {
-	loopback, err := netlink.LinkByName("lo")
+	intf, err := net.InterfaceByName("lo")
 	if err != nil {
-		return err
+		SkipWithReason(t, "Test Setup Failed: Failed to Prepare Loopback: "+err.Error())
 	}
 
-	netlink.LinkSetUp(loopback)
+	loopback, err := netlink.LinkByIndex(intf.Index)
+	if err != nil {
+		SkipWithReason(t, "Test Setup Failed: Failed to Prepare Loopback: "+err.Error())
+	}
 
-	return nil
+	if err := netlink.LinkSetUp(loopback); err != nil {
+		SkipWithReason(t, "Test Setup Failed: Failed to Prepare Loopback: "+err.Error())
+	}
+
+	return intf
 }
 
-func addRouteToLoopback(network string) error {
+func _platformRandomIPv4Route(intf *net.Interface) (*net.IPNet, error) {
 
-	loopback, err := netlink.LinkByName("lo")
+	link, err := netlink.LinkByIndex(intf.Index)
 	if err != nil {
-		return err
+		return nil, err
 	}
 
-	if err := setLoopbackUp(); err != nil {
-		return err
-	}
-
-	_, destination, err := net.ParseCIDR(network)
-	if err != nil {
-		return err
-	}
+	destination := RandomIPv4()
 
 	err = netlink.RouteAdd(&netlink.Route{
 		Dst:       destination,
-		LinkIndex: loopback.Attrs().Index,
+		LinkIndex: link.Attrs().Index,
 	})
 	if err != nil {
-		return err
+		return nil, err
 	}
 
-	return nil
+	return destination, nil
 }
 
-func loopbackHasAddress(address string) bool {
+func _platformIntfHasAddress(intf *net.Interface, address *net.IPNet) bool {
 
-	loopback, err := netlink.LinkByName("lo")
+	link, err := netlink.LinkByIndex(intf.Index)
 	if err != nil {
 		return false
 	}
 
-	addrs, err := netlink.AddrList(loopback, netlink.FAMILY_ALL)
+	addrs, err := netlink.AddrList(link, netlink.FAMILY_ALL)
 	if err != nil {
 		return false
 	}
 
 	for _, addr := range addrs {
-		if addr.IPNet.String() == address {
+		if addr.IPNet.String() == address.String() {
 			return true
 		}
 	}
 	return false
-
 }
+
+func _platformRouteExists(destination *net.IPNet) bool {
+
+	filter := &netlink.Route{
+		Dst: destination,
+	}
+
+	routes, err := netlink.RouteListFiltered(netlink.FAMILY_ALL, filter, 0)
+	if err != nil {
+		return false
+	}
+
+	return len(routes) != 0
+}
+
+
