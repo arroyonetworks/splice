@@ -9,6 +9,11 @@ import (
 	"testing"
 )
 
+var v4LoopbackAddr = &net.IPNet{
+	IP:   net.ParseIP("127.0.0.1"),
+	Mask: net.IPv4Mask(255, 0, 0, 0),
+}
+
 // ============================================================================
 //	Test Setup and Teardown Helpers
 // ============================================================================
@@ -78,4 +83,25 @@ func addRouteToLoopback(network string) error {
 	}
 
 	return nil
+}
+
+func loopbackHasAddress(address string) bool {
+
+	loopback, err := netlink.LinkByName("lo")
+	if err != nil {
+		return false
+	}
+
+	addrs, err := netlink.AddrList(loopback, netlink.FAMILY_ALL)
+	if err != nil {
+		return false
+	}
+
+	for _, addr := range addrs {
+		if addr.IPNet.String() == address {
+			return true
+		}
+	}
+	return false
+
 }
