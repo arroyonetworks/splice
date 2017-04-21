@@ -9,7 +9,7 @@ import (
 
 // Returns a list of IP addresses configured on the given interface.
 // This is equivalent to 'ip address show <interface>'
-func GetIPAddresses(intf *net.Interface) ([]*net.IPNet, error) {
+func AddressList(intf *net.Interface) ([]*net.IPNet, error) {
 
 	var ipAddresses []*net.IPNet
 	var err error
@@ -31,7 +31,7 @@ func GetIPAddresses(intf *net.Interface) ([]*net.IPNet, error) {
 
 // Adds an IP address to an interface.
 // This is equivalent to 'ip address add <address> dev <intf.Name>'
-func AddIPAddress(intf *net.Interface, address *net.IPNet) error {
+func AddressAdd(intf *net.Interface, address *net.IPNet) error {
 
 	var err error
 
@@ -49,7 +49,7 @@ func AddIPAddress(intf *net.Interface, address *net.IPNet) error {
 
 // Removes an IP address from an interface.
 // This is equivalent to 'ip address del <address> dev <intf.Name>'
-func DeleteIPAddress(intf *net.Interface, address *net.IPNet) error {
+func AddressDelete(intf *net.Interface, address *net.IPNet) error {
 
 	var err error
 

@@ -7,10 +7,10 @@ import (
 )
 
 // ============================================================================
-//	CanRouteTo
+//	RouteExistsTo
 // ============================================================================
 
-func TestCanRouteTo_ValidRoute(t *testing.T) {
+func TestRouteExistsTo_ValidRoute(t *testing.T) {
 
 	config := SetUpTest(t)
 	defer config.tearDownTest()
@@ -20,35 +20,35 @@ func TestCanRouteTo_ValidRoute(t *testing.T) {
 
 	routeNet := RandomIPv4Route(t, config.loopbackIntf)
 
-	// (2)	Test CanRouteTo
+	// (2)	Test RouteExistsTo
 	//			Expected: true
 	// ------------------------------------------------------------------------
 
-	if retval := splice.CanRouteTo(routeNet.IP); retval != true {
-		t.Error("CanRouteTo Returned 'false' for an Existing Route")
+	if retval := splice.RouteExistsTo(routeNet.IP); retval != true {
+		t.Error("RouteExistsTo Returned 'false' for an Existing Route")
 	}
 }
 
-func TestCanRouteTo_MissingRoute(t *testing.T) {
+func TestRouteExistsTo_MissingRoute(t *testing.T) {
 
 	config := SetUpTest(t)
 	defer config.tearDownTest()
 
-	// (1)	Test CanRouteTo
+	// (1)	Test RouteExistsTo
 	//			Expected: false
 	// ------------------------------------------------------------------------
 
 	ip := net.ParseIP("100.100.5.5")
-	if retval := splice.CanRouteTo(ip); retval != false {
-		t.Error("CanRouteTo Returned 'true' for a Non-Existing Route")
+	if retval := splice.RouteExistsTo(ip); retval != false {
+		t.Error("RouteExistsTo Returned 'true' for a Non-Existing Route")
 	}
 }
 
 // ============================================================================
-//	HasRoute
+//	RouteHasEntry
 // ============================================================================
 
-func TestHasRoute_ValidRoute(t *testing.T) {
+func TestRouteHasEntry_ValidRoute(t *testing.T) {
 
 	config := SetUpTest(t)
 	defer config.tearDownTest()
@@ -58,47 +58,47 @@ func TestHasRoute_ValidRoute(t *testing.T) {
 
 	routeNet := RandomIPv4Route(t, config.loopbackIntf)
 
-	// (2)	Test HasRoute
+	// (2)	Test RouteHasEntry
 	//			Expected: true
 	// ------------------------------------------------------------------------
 
-	if retval := splice.HasRoute(routeNet); retval != true {
-		t.Error("HasRoute Returned 'false' for an Existing Route")
+	if retval := splice.RouteHasEntry(routeNet); retval != true {
+		t.Error("RouteHasEntry Returned 'false' for an Existing Route")
 	}
 }
 
-func TestHasRoute_MissingRoute(t *testing.T) {
+func TestRouteHasEntry_MissingRoute(t *testing.T) {
 
 	config := SetUpTest(t)
 	defer config.tearDownTest()
 
-	// (1)	Test HasRoute
+	// (1)	Test RouteHasEntry
 	//			Expected: false
 	// ------------------------------------------------------------------------
 
 	routeNet := RandomIPv4()
-	if retval := splice.HasRoute(routeNet); retval != false {
-		t.Error("HasRoute Returned 'true' for a Non-Existing Route")
+	if retval := splice.RouteHasEntry(routeNet); retval != false {
+		t.Error("RouteHasEntry Returned 'true' for a Non-Existing Route")
 	}
 }
 
-func TestHasRoute_InvalidDestinationValue(t *testing.T) {
+func TestRouteHasEntry_InvalidDestinationValue(t *testing.T) {
 
 	config := SetUpTest(t)
 	defer config.tearDownTest()
 
-	// (1)	Test HasRoute
+	// (1)	Test RouteHasEntry
 	//			Expected: false
 	// ------------------------------------------------------------------------
 
-	if retval := splice.HasRoute(&net.IPNet{}); retval != false {
-		t.Error("HasRoute Returned 'true' for an Invalid Destination Value")
+	if retval := splice.RouteHasEntry(&net.IPNet{}); retval != false {
+		t.Error("RouteHasEntry Returned 'true' for an Invalid Destination Value")
 	}
 }
 
 // Tests to ensure that a subnet of the route destination network does not
 // match the route entry.
-func TestHasRoute_SubnetRoute(t *testing.T) {
+func TestRouteHasEntry_SubnetRoute(t *testing.T) {
 
 	config := SetUpTest(t)
 	defer config.tearDownTest()
@@ -107,36 +107,36 @@ func TestHasRoute_SubnetRoute(t *testing.T) {
 
 	routeNet := RandomIPv4Route(t, config.loopbackIntf)
 
-	// (2)	Test HasRoute
+	// (2)	Test RouteHasEntry
 	//			Expected: false
 
 	subnet := &net.IPNet{
 		IP:   routeNet.IP,
 		Mask: net.IPv4Mask(255, 255, 255, 254),
 	}
-	if retval := splice.HasRoute(subnet); retval != false {
-		t.Error("HasRoute Returned 'true' for a Subnet of a Route")
+	if retval := splice.RouteHasEntry(subnet); retval != false {
+		t.Error("RouteHasEntry Returned 'true' for a Subnet of a Route")
 	}
 }
 
 // ============================================================================
-//	AddRouteViaGateway
+//	RouteAddViaGateway
 // ============================================================================
 
-func TestAddRouteViaGateway_ReachableGW(t *testing.T) {
+func TestRouteAddViaGateway_ReachableGW(t *testing.T) {
 
 	config := SetUpTest(t)
 	defer config.tearDownTest()
 
-	// (1)	Add a Route via AddRouteViaGateway
+	// (1)	Add a Route via RouteAddViaGateway
 	//			Expect: No error
 	// ------------------------------------------------------------------------
 
 	routeNet := RandomIPv4()
 	gw := IPv4LoopbackAddr.IP
 
-	if err := splice.AddRouteViaGateway(routeNet, gw); err != nil {
-		t.Fatal("AddRouteViaGateway Returned Error: ", err)
+	if err := splice.RouteAddViaGateway(routeNet, gw); err != nil {
+		t.Fatal("RouteAddViaGateway Returned Error: ", err)
 	}
 
 	// (2)	Expect: The route was added to the routing table
@@ -148,19 +148,19 @@ func TestAddRouteViaGateway_ReachableGW(t *testing.T) {
 
 }
 
-func TestAddRouteViaGateway_UnreachableGW(t *testing.T) {
+func TestRouteAddViaGateway_UnreachableGW(t *testing.T) {
 
 	config := SetUpTest(t)
 	defer config.tearDownTest()
 
-	// (1)	Add Route via AddRouteViaGateway
+	// (1)	Add Route via RouteAddViaGateway
 	//			Expect: Error (Unreachable Network)
 	// ------------------------------------------------------------------------
 
 	_, destination, _ := net.ParseCIDR("100.100.0.0/16")
 	gw := net.ParseIP("25.0.0.1")
 
-	if err := splice.AddRouteViaGateway(destination, gw); err == nil {
+	if err := splice.RouteAddViaGateway(destination, gw); err == nil {
 		t.Fatal("No Error Returned for Unreachable Gateway")
 	}
 
@@ -173,22 +173,22 @@ func TestAddRouteViaGateway_UnreachableGW(t *testing.T) {
 }
 
 // ============================================================================
-//	AddRouteViaInterface
+//	RouteAddViaInterface
 // ============================================================================
 
-func TestAddRouteViaInterface(t *testing.T) {
+func TestRouteAddViaInterface(t *testing.T) {
 
 	config := SetUpTest(t)
 	defer config.tearDownTest()
 
-	// (1)	Add Route via AddRouteViaInterface
+	// (1)	Add Route via RouteAddViaInterface
 	//			Expect: No error
 	// ------------------------------------------------------------------------
 
 	routeNet := RandomIPv4()
 
-	if err := splice.AddRouteViaInterface(routeNet, config.loopbackIntf); err != nil {
-		t.Fatal("AddRouteViaInterface Returned Error: ", err)
+	if err := splice.RouteAddViaInterface(routeNet, config.loopbackIntf); err != nil {
+		t.Fatal("RouteAddViaInterface Returned Error: ", err)
 	}
 
 	// (2)	Expect: The route was added to the routing table

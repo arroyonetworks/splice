@@ -7,10 +7,10 @@ import (
 )
 
 // ============================================================================
-//	GetIPAddresses
+//	AddressList
 // ============================================================================
 
-func TestGetIPAddresses(t *testing.T) {
+func TestAddressList(t *testing.T) {
 
 	config := SetUpTest(t)
 	defer config.tearDownTest()
@@ -19,9 +19,9 @@ func TestGetIPAddresses(t *testing.T) {
 	//			Expect: No error
 	// ------------------------------------------------------------------------
 
-	addrs, err := splice.GetIPAddresses(config.loopbackIntf)
+	addrs, err := splice.AddressList(config.loopbackIntf)
 	if err != nil {
-		t.Fatal("GetIPAddresses Returned Error: ", err)
+		t.Fatal("AddressList Returned Error: ", err)
 	}
 
 	// (2)	Search the Returned IP Addresses
@@ -43,7 +43,7 @@ func TestGetIPAddresses(t *testing.T) {
 	}
 }
 
-func TestGetIPAddresses_InvalidIntfValue(t *testing.T) {
+func TestAddressList_InvalidIntfValue(t *testing.T) {
 
 	config := SetUpTest(t)
 	defer config.tearDownTest()
@@ -53,16 +53,16 @@ func TestGetIPAddresses_InvalidIntfValue(t *testing.T) {
 	// ------------------------------------------------------------------------
 
 	intf := &net.Interface{Index: -1}
-	if _, err := splice.GetIPAddresses(intf); err == nil {
-		t.Fatal("GetIPAddresses Did Not Return an Error With Invalid Interface Value")
+	if _, err := splice.AddressList(intf); err == nil {
+		t.Fatal("AddressList Did Not Return an Error With Invalid Interface Value")
 	}
 }
 
 // ============================================================================
-//	AddIPAddress
+//	AddressAdd
 // ============================================================================
 
-func TestAddIPAddress(t *testing.T) {
+func TestAddressAdd(t *testing.T) {
 
 	config := SetUpTest(t)
 	defer config.tearDownTest()
@@ -73,8 +73,8 @@ func TestAddIPAddress(t *testing.T) {
 
 	newAddr := RandomIPv4()
 
-	if err := splice.AddIPAddress(config.loopbackIntf, newAddr); err != nil {
-		t.Fatal("AddIPAddress Returned Error: ", err)
+	if err := splice.AddressAdd(config.loopbackIntf, newAddr); err != nil {
+		t.Fatal("AddressAdd Returned Error: ", err)
 	}
 
 	// (2)	Expect: Address is Present on Interface
@@ -85,7 +85,7 @@ func TestAddIPAddress(t *testing.T) {
 	}
 }
 
-func TestAddIPAddress_InvalidAddressValue(t *testing.T) {
+func TestAddressAdd_InvalidAddressValue(t *testing.T) {
 
 	config := SetUpTest(t)
 	defer config.tearDownTest()
@@ -98,16 +98,16 @@ func TestAddIPAddress_InvalidAddressValue(t *testing.T) {
 		IP: net.IP{},
 	}
 
-	if err := splice.AddIPAddress(config.loopbackIntf, newAddr); err == nil {
-		t.Fatal("AddIPAddress Did Not Return an Error With Invalid Address")
+	if err := splice.AddressAdd(config.loopbackIntf, newAddr); err == nil {
+		t.Fatal("AddressAdd Did Not Return an Error With Invalid Address")
 	}
 }
 
 // ============================================================================
-//	DeleteIPAddress
+//	AddressDelete
 // ============================================================================
 
-func TestDeleteIPAddress(t *testing.T) {
+func TestAddressDelete(t *testing.T) {
 
 	config := SetUpTest(t)
 	defer config.tearDownTest()
@@ -116,8 +116,8 @@ func TestDeleteIPAddress(t *testing.T) {
 	//			Expect: No error
 	// ------------------------------------------------------------------------
 
-	if err := splice.DeleteIPAddress(config.loopbackIntf, IPv4LoopbackAddr); err != nil {
-		t.Fatal("DeleteIPAddress Returned Error: ", err)
+	if err := splice.AddressDelete(config.loopbackIntf, IPv4LoopbackAddr); err != nil {
+		t.Fatal("AddressDelete Returned Error: ", err)
 	}
 
 	// (2)	Expect: Address is NOT Present on Interface
@@ -128,7 +128,7 @@ func TestDeleteIPAddress(t *testing.T) {
 	}
 }
 
-func TestDeleteIPAddress_InvalidAddressValue(t *testing.T) {
+func TestAddressDelete_InvalidAddressValue(t *testing.T) {
 
 	config := SetUpTest(t)
 	defer config.tearDownTest()
@@ -141,7 +141,7 @@ func TestDeleteIPAddress_InvalidAddressValue(t *testing.T) {
 		IP: net.IP{},
 	}
 
-	if err := splice.DeleteIPAddress(config.loopbackIntf, badAddr); err == nil {
-		t.Fatal("DeleteIPAddress Did Not Return an Error With Invalid Address")
+	if err := splice.AddressDelete(config.loopbackIntf, badAddr); err == nil {
+		t.Fatal("AddressDelete Did Not Return an Error With Invalid Address")
 	}
 }
