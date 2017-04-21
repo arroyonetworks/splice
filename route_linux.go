@@ -51,7 +51,7 @@ func HasRoute(destination *net.IPNet) bool {
 }
 
 // Adds a new route to the given IP network, routed by the given gateway.
-// This is equivalent of 'ip address add <destination> via <gateway>'.
+// This is equivalent to 'ip route add <destination> via <gateway>'.
 func AddRouteViaGateway(destination *net.IPNet, gateway net.IP) error {
 
 	route := &netlink.Route{
@@ -62,7 +62,7 @@ func AddRouteViaGateway(destination *net.IPNet, gateway net.IP) error {
 }
 
 // Adds a new route to the given IP network, send out the given interface.
-// This is equivalent of 'ip address add <destination> dev <intf.Name>'.
+// This is equivalent to 'ip route add <destination> dev <intf.Name>'.
 func AddRouteViaInterface(destination *net.IPNet, intf *net.Interface) error {
 
 	route := &netlink.Route{
