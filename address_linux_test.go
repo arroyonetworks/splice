@@ -48,6 +48,21 @@ func TestGetIPAddresses(t *testing.T) {
 	}
 }
 
+func TestGetIPAddresses_InvalidIntfValue(t *testing.T) {
+
+	teardown := setupNamespaceTest(t)
+	defer teardown()
+
+	// (1)	Get the IP Addresses
+	//			Expect: Error since Interface is Invalid
+
+	intf := &net.Interface{Index: -1}
+	if _, err := splice.GetIPAddresses(intf); err == nil {
+		t.Fatal("GetIPAddresses Did Not Return an Error With Invalid Interface Value")
+	}
+}
+
+
 // ============================================================================
 //	AddIPAddress
 // ============================================================================
@@ -84,6 +99,33 @@ func TestAddIPAddress(t *testing.T) {
 	}
 }
 
+func TestAddIPAddress_InvalidAddressValue(t *testing.T) {
+
+	teardown := setupNamespaceTest(t)
+	defer teardown()
+
+	// (1)	Bring Loopback Interface Up and Get Loopback Interface Handle
+
+	if err := setLoopbackUp(); err != nil {
+		t.Fatal("Unable to Set Loopback Up: ", err)
+	}
+
+	lo, _ := net.InterfaceByName("lo")
+
+	// (2)	Add Another Loopback Address
+	//			Expect: Error since the Address is Invalid
+
+	newAddr := &net.IPNet{
+		IP:   net.IP{},
+		Mask: v4LoopbackAddr.Mask,
+	}
+
+	if err := splice.AddIPAddress(lo, newAddr); err == nil {
+		t.Fatal("AddIPAddress Did Not Return an Error With Invalid Address")
+	}
+
+}
+
 // ============================================================================
 //	DeleteIPAddress
 // ============================================================================
@@ -112,6 +154,33 @@ func TestDeleteIPAddress(t *testing.T) {
 
 	if loopbackHasAddress(v4LoopbackAddr.String()) {
 		t.Fatal("Loopback Still Has Loopback Address")
+	}
+
+}
+
+func TestDeleteIPAddress_InvalidAddressValue(t *testing.T) {
+
+	teardown := setupNamespaceTest(t)
+	defer teardown()
+
+	// (1)	Bring Loopback Interface Up and Get Loopback Interface Handle
+
+	if err := setLoopbackUp(); err != nil {
+		t.Fatal("Unable to Set Loopback Up: ", err)
+	}
+
+	lo, _ := net.InterfaceByName("lo")
+
+	// (2)	Delete the Loopback Address
+	//			Expect: No error
+
+	badAddr := &net.IPNet{
+		IP:   net.IP{},
+		Mask: v4LoopbackAddr.Mask,
+	}
+
+	if err := splice.DeleteIPAddress(lo, badAddr); err == nil {
+		t.Fatal("DeleteIPAddress Did Not Return an Error With Invalid Address")
 	}
 
 }

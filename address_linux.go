@@ -12,54 +12,55 @@ import (
 func GetIPAddresses(intf *net.Interface) ([]*net.IPNet, error) {
 
 	var ipAddresses []*net.IPNet
+	var err error
 
-	link, err := netlink.LinkByIndex(intf.Index)
-	if err != nil {
-		return ipAddresses, err
+	var link netlink.Link
+	var addrs []netlink.Addr
+
+	if link, err = netlink.LinkByIndex(intf.Index); err == nil {
+		if addrs, err = netlink.AddrList(link, netlink.FAMILY_ALL); err == nil {
+			for _, addr := range addrs {
+				ipAddresses = append(ipAddresses, addr.IPNet)
+			}
+			return ipAddresses, nil
+		}
 	}
 
-	addrs, err := netlink.AddrList(link, netlink.FAMILY_ALL)
-	if err != nil {
-		return ipAddresses, err
-	}
-
-	for _, addr := range addrs {
-		ipAddresses = append(ipAddresses, addr.IPNet)
-	}
-
-	return ipAddresses, nil
+	return ipAddresses, err
 }
 
 // Adds an IP address to an interface.
 // This is equivalent to 'ip address add <address> dev <intf.Name>'
 func AddIPAddress(intf *net.Interface, address *net.IPNet) error {
 
-	link, err := netlink.LinkByIndex(intf.Index)
-	if err != nil {
-		return err
+	var err error
+
+	var link netlink.Link
+	var addr *netlink.Addr
+
+	if link, err = netlink.LinkByIndex(intf.Index); err == nil {
+		if addr, err = netlink.ParseAddr(address.String()); err == nil {
+			return netlink.AddrAdd(link, addr)
+		}
 	}
 
-	addr, err := netlink.ParseAddr(address.String())
-	if err != nil {
-		return err
-	}
-
-	return netlink.AddrAdd(link, addr)
+	return err
 }
 
 // Removes an IP address from an interface.
 // This is equivalent to 'ip address del <address> dev <intf.Name>'
 func DeleteIPAddress(intf *net.Interface, address *net.IPNet) error {
 
-	link, err := netlink.LinkByIndex(intf.Index)
-	if err != nil {
-		return err
+	var err error
+
+	var link netlink.Link
+	var addr *netlink.Addr
+
+	if link, err = netlink.LinkByIndex(intf.Index); err == nil {
+		if addr, err = netlink.ParseAddr(address.String()); err == nil {
+			return netlink.AddrDel(link, addr)
+		}
 	}
 
-	addr, err := netlink.ParseAddr(address.String())
-	if err != nil {
-		return err
-	}
-
-	return netlink.AddrDel(link, addr)
+	return err
 }
