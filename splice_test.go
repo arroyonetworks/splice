@@ -47,6 +47,23 @@ func RandomIPv4() *net.IPNet {
 	}
 }
 
+// Determines if an interface already exists.
+func IntfExists(name string) bool {
+	_, err := net.InterfaceByName(name)
+	if err != nil {
+		return false
+	}
+	return true
+}
+
+func IntfIsDown(intf *net.Interface) bool {
+	return intf.Flags&net.FlagUp == 0
+}
+
+func IntfIsUp(intf *net.Interface) bool {
+	return intf.Flags&net.FlagUp != 0
+}
+
 // ============================================================================
 //	Test Utility Functions
 // ============================================================================
@@ -73,4 +90,32 @@ func IntfHasAddress(t *testing.T, intf *net.Interface, address *net.IPNet) bool 
 // Determines if a route exists in the system's routing table.
 func RouteExists(t *testing.T, destination *net.IPNet) bool {
 	return _platformRouteExists(destination)
+}
+
+// Returns a new dummy interface in the down state.
+func GetDummyDownIntf(t *testing.T) *net.Interface {
+	intf, err := _platformGetDummyDownIntf()
+	if err != nil {
+		t.Fatal("Failed to get a Downed Dummy Interface: ", err)
+	}
+
+	if !IntfIsDown(intf) {
+		t.Fatalf("Interface %s Appears to be Up when Requsted Down", intf.Name)
+	}
+
+	return intf
+}
+
+// Returns a new dummy interface in the up date.
+func GetDummyUpIntf(t *testing.T) *net.Interface {
+	intf, err := _platformGetDummyUpIntf()
+	if err != nil {
+		t.Fatal("Failed to get an Up Dummy Interface: ", err)
+	}
+
+	if !IntfIsUp(intf) {
+		t.Fatalf("Interface %s Appears to be Down when Requsted Up", intf.Name)
+	}
+
+	return intf
 }

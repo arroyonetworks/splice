@@ -1,8 +1,10 @@
 package splice_test
 
 import (
+	"fmt"
 	"github.com/vishvananda/netlink"
 	"github.com/vishvananda/netns"
+	"math/rand"
 	"net"
 	"os"
 	"testing"
@@ -112,4 +114,58 @@ func _platformRouteExists(destination *net.IPNet) bool {
 	return len(routes) != 0
 }
 
+func _platformGetDummyUpIntf() (*net.Interface, error) {
 
+	// Find a free interface name
+	intfName := ""
+	for true {
+		intfName = fmt.Sprintf("dummy%d", rand.Intn(127))
+		if !IntfExists(intfName) {
+			break
+		}
+	}
+
+	attrs := netlink.NewLinkAttrs()
+	attrs.Name = intfName
+
+	link := &netlink.Dummy{LinkAttrs: attrs}
+
+	err := netlink.LinkAdd(link)
+	if err != nil {
+		return nil, err
+	}
+
+	err = netlink.LinkSetUp(link)
+	if err != nil {
+		return nil, err
+	}
+
+	return net.InterfaceByName(attrs.Name)
+
+}
+
+func _platformGetDummyDownIntf() (*net.Interface, error) {
+
+	// Find a free interface name
+	intfName := ""
+	for true {
+		intfName = fmt.Sprintf("dummy%d", rand.Intn(127))
+		if !IntfExists(intfName) {
+			break
+		}
+	}
+
+	attrs := netlink.NewLinkAttrs()
+	attrs.Name = intfName
+	attrs.OperState = netlink.OperDown
+
+	link := &netlink.Dummy{LinkAttrs: attrs}
+
+	err := netlink.LinkAdd(link)
+	if err != nil {
+		return nil, err
+	}
+
+	return net.InterfaceByName(attrs.Name)
+
+}
