@@ -4,6 +4,7 @@ stages:
   - test
 
 variables:
+  GOPATH: /go
   REPO_PATH: ${GOPATH}/src/gitlab.com/ArroyoNetworks
 
 # == Unit Test Template ===================================================== #
@@ -11,8 +12,8 @@ variables:
 ._test: &test
   stage: test
   before_script:
-    - mkdir -p ${REPO_PATH}
-    - ln -s ${CI_PROJECT_DIR} ${REPO_PATH}/${CI_PROJECT_NAME}
+    - mkdir -v -p ${REPO_PATH}
+    - ln -v -s ${CI_PROJECT_DIR} ${REPO_PATH}/${CI_PROJECT_NAME}
     - cd ${REPO_PATH}/${CI_PROJECT_NAME}
     - go get -t .
   script:
