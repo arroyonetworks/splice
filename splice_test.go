@@ -2,6 +2,7 @@
 // Use of this source code is governed by a BSD-style
 // license that can be found in the LICENSE file.
 
+// Provides unit tests for the Splice library.
 package splice_test
 
 import (
