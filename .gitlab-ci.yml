@@ -4,7 +4,6 @@ stages:
   - test
 
 variables:
-  GOPATH: "/go"
   REPO_PATH: ${GOPATH}/src/gitlab.com/ArroyoNetworks
 
 # == Unit Test Template ===================================================== #
