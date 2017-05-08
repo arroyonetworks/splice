@@ -14,7 +14,7 @@ variables:
     - mkdir -p ${REPO_PATH}
     - ln -s ${CI_PROJECT_DIR} ${REPO_PATH}/${CI_PROJECT_NAME}
     - cd ${REPO_PATH}/${CI_PROJECT_NAME}
-    - go get .
+    - go get -t .
   script:
     - go test -coverprofile /dev/null
 
