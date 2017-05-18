@@ -114,7 +114,7 @@ The following are supported on Linux systems:
 
 The following are third-party dependencies used for providing Linux support:
 
-- [https://github.com/vishvananda/netlink](https://github.com/vishvananda/netlink)
+- [github.com/vishvananda/netlink](https://github.com/vishvananda/netlink)
 
 #### Unit Tests
 
@@ -132,7 +132,24 @@ The following are third-party dependencies used for providing Linux support:
 
 ### macOS
 
-Not yet implemented.
+The following are supported on Darwin systems:
+
+- IP Address Configuration
+- Interface Link Manipulation
+
+The following are *NOT* yet supported:
+
+- Route Manipulation (Accepting Merge Requests)
+
+#### Dependencies
+
+The following are third-party dependencies used for providing Darwin support:
+
+- [golang.org/x/sys/unix](https://godoc.org/golang.org/x/sys/unix)
+
+#### Unit Tests
+
+Unit tests are not yet available for Darwin.
 
 ### Windows
 
