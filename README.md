@@ -110,13 +110,13 @@ The following are supported on Linux systems:
 - Interface Link Manipulation
 - Route Manipulation
 
-#### Dependencies
+##### Dependencies
 
 The following are third-party dependencies used for providing Linux support:
 
 - [github.com/vishvananda/netlink](https://github.com/vishvananda/netlink)
 
-#### Unit Tests
+##### Unit Tests
 
 > Linux unit tests are automatically ran in a temporary networking namespace in order to prevent
 > accidental alteration of the system's networking configuration. Because of this, test for
@@ -141,13 +141,13 @@ The following are *NOT* yet supported:
 
 - Route Manipulation (Accepting Merge Requests)
 
-#### Dependencies
+##### Dependencies
 
 The following are third-party dependencies used for providing Darwin support:
 
 - [golang.org/x/sys/unix](https://godoc.org/golang.org/x/sys/unix)
 
-#### Unit Tests
+##### Unit Tests
 
 Unit tests are not yet available for Darwin.
 
@@ -159,3 +159,7 @@ Not yet implemented.
 
 Copyright 2017 Arroyo Networks, LLC. All rights reserved.<br/>
 This project is governed by a BSD-style license. See [LICENSE](https://gitlab.com/ArroyoNetworks/splice/raw/master/LICENSE) for the full license text.
+
+## Related Projects
+
+- [github.com/songgao/water](https://github.com/songgao/water): A native Go library for TUN/TAP interfaces. Includes support for Linux, macOS, and Windows.
