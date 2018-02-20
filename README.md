@@ -2,7 +2,7 @@
 ### A high-level and multi-os library for manipulating network interfaces, links, and routes.
 
 
-[![GoDoc](https://godoc.org/github.com/ArroyoNetworks/splice?status.svg)](https://godoc.org/gitlab.com/ArroyoNetworks/splice)
+[![GoDoc](https://godoc.org/github.com/ArroyoNetworks/splice?status.svg)](https://godoc.org/github.com/ArroyoNetworks/splice)
 
 **This library is still considered beta, the interfaces may change until 1.0 is released.**
 
