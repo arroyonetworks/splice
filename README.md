@@ -2,9 +2,7 @@
 ### A high-level and multi-os library for manipulating network interfaces, links, and routes.
 
 
-[![build status](https://gitlab.com/ArroyoNetworks/splice/badges/master/build.svg)](https://gitlab.com/ArroyoNetworks/splice/commits/master)
-[![coverage report](https://gitlab.com/ArroyoNetworks/splice/badges/master/coverage.svg)](https://gitlab.com/ArroyoNetworks/splice/commits/master)
-[![GoDoc](https://godoc.org/gitlab.com/ArroyoNetworks/splice?status.svg)](https://godoc.org/gitlab.com/ArroyoNetworks/splice)
+[![GoDoc](https://godoc.org/github.com/ArroyoNetworks/splice?status.svg)](https://godoc.org/gitlab.com/ArroyoNetworks/splice)
 
 **This library is still considered beta, the interfaces may change until 1.0 is released.**
 
@@ -15,7 +13,7 @@ for multiple operating systems.
 
 ### Add Splice to Your Workspace
 
-    go get gitlab.com/ArroyoNetworks/splice
+    go get github.com/ArroyoNetworks/splice
 
 ### Examples
 
@@ -124,7 +122,7 @@ The following are third-party dependencies used for providing Linux support:
 
 1. Download the Test Dependencies
 
-        go get -t gitlab.com/ArroyoNetworks/splice
+        go get -t github.com/ArroyoNetworks/splice
 
 2. Run the Unit Tests
 
@@ -157,8 +155,8 @@ Not yet implemented.
 
 ## License
 
-Copyright 2017 Arroyo Networks, LLC. All rights reserved.<br/>
-This project is governed by a BSD-style license. See [LICENSE](https://gitlab.com/ArroyoNetworks/splice/raw/master/LICENSE) for the full license text.
+Copyright 2018 Arroyo Networks, LLC. All rights reserved.<br/>
+This project is governed by a BSD-style license. See [LICENSE](https://github.com/ArroyoNetworks/splice/raw/master/LICENSE) for the full license text.
 
 ## Related Projects
 
