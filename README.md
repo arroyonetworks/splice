@@ -13,7 +13,7 @@ for multiple operating systems.
 
 ### Add Splice to Your Workspace
 
-    go get github.com/ArroyoNetworks/splice
+    go get github.com/arroyonetworks/splice
 
 ### Examples
 
